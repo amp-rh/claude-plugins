@@ -1,0 +1,9 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "amp-rh-plugins",
+  "description": "Public plugin marketplace for Claude Code extensions",
+  "owner": {
+    "name": "amp-rh"
+  },
+  "plugins": []
+}
