@@ -5,5 +5,12 @@
   "owner": {
     "name": "amp-rh"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "agent-reflection",
+      "description": "Automated session reflection that reviews agent, skill, and command usage, identifies improvements, applies edits to user-owned files, and files GitHub issues for marketplace plugin improvements",
+      "source": "./agent-reflection",
+      "category": "productivity"
+    }
+  ]
 }

@@ -4,7 +4,8 @@ Public plugin marketplace for Claude Code extensions by [amp-rh](https://github.
 
 ## Plugins
 
-None yet. Plugins will be added here as they are ready for public release.
+### agent-reflection
+Automated session reflection that reviews agent, skill, and command usage at session end, scores performance across 8 quality axes, and implements improvements directly or via GitHub issues.
 
 ## Usage
 
