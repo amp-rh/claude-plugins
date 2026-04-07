@@ -11,18 +11,6 @@
       "description": "Automated session reflection that reviews agent, skill, and command usage, identifies improvements, applies edits to user-owned files, and files GitHub issues for marketplace plugin improvements",
       "source": "./agent-reflection",
       "category": "productivity"
-    },
-    {
-      "name": "ci-monitoring",
-      "description": "MCP-based CI monitoring infrastructure for OpenShift interop job health, agent-driven triage workflows, and watcher rotation automation.",
-      "source": "./ci-monitoring",
-      "category": "ci"
-    },
-    {
-      "name": "interop-standards",
-      "description": "Codified interop testing standards for OpenShift CI: expansion workflows, PR review enforcement, rule auditing, and rehearsal best practices.",
-      "source": "./interop-standards",
-      "category": "ci"
     }
   ]
 }
