@@ -1,0 +1,57 @@
+---
+description: When working with MCP servers under mcp/ and discovering library capabilities not yet exposed as tools, delegate a fast subagent to add them.
+globs: mcp/**/*.py
+alwaysApply: false
+---
+
+# MCP Tool Expansion
+
+When using an MCP server and discovering that the underlying library supports an operation not yet exposed as a tool, delegate a **fast subagent** to add it rather than doing it manually.
+
+## When to trigger
+
+- You need a capability (rename, chat, delete, etc.) and there's no MCP tool for it
+- You call the library directly via Python as a workaround
+- The user asks you to add tools to an MCP server
+
+## Subagent prompt template
+
+Include all of these in the delegation prompt:
+
+1. **File paths**: The server's `server.py` and `client.py` (or equivalent)
+2. **Existing patterns**: Tell the subagent to read the existing code first and follow the same patterns exactly
+3. **Library API**: The exact method signatures from the underlying library (e.g., `client.chat.ask(notebook_id, question)` -> `AskResult`)
+4. **Tool spec**: For each tool: name, description, parameters (with types and required/optional), and what to return
+5. **Code rules**: No comments, self-documenting code, follow existing patterns
+
+## Example delegation
+
+```
+Add new tools to the MCP server at `mcp/<name>/src/<name>_mcp/`.
+
+The server has two files:
+- `server.py` - Tool definitions and handlers
+- `client.py` - Business logic wrapping the underlying library
+
+The underlying library exposes:
+- `client.<api>.<method>(args)` -> ReturnType
+
+Read the existing server.py and client.py first to understand the patterns. Then add:
+
+1. `tool_name` - Description. Parameters: x (required), y (optional). Return z.
+
+Rules:
+- Do NOT add comments. Make code self-documenting.
+- Follow existing patterns exactly.
+- Add business logic to client.py, wire up in server.py.
+```
+
+## After adding tools
+
+- Update the skill doc at `skills/<name>-mcp/SKILL.md` with the new tools table
+- Update `mcp/AGENTS.md` if the server description changed
+- The MCP server process must restart for new tools to appear (Cursor reload)
+
+## For simple tools with no library call
+
+If the tool logic is trivial (e.g., `xdg-open` a URL), keep it inline in `server.py` — no need for a `client.py` function.

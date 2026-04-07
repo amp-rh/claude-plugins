@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.ci.openshift.org)",
+      "WebFetch(domain:steps.ci.openshift.org)",
+      "WebFetch(domain:sippy.dptools.openshift.org)",
+      "WebFetch(domain:prow.ci.openshift.org)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

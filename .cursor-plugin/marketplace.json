@@ -1,27 +1,28 @@
 {
-  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "amp-rh-plugins",
-  "description": "Public plugin marketplace for Claude Code extensions",
   "owner": {
     "name": "amp-rh"
+  },
+  "metadata": {
+    "description": "amp-rh Claude Code and Cursor plugins (https://github.com/amp-rh/claude-plugins)"
   },
   "plugins": [
     {
       "name": "agent-reflection",
+      "source": "agent-reflection",
       "description": "Automated session reflection that reviews agent, skill, and command usage, identifies improvements, applies edits to user-owned files, and files GitHub issues for marketplace plugin improvements",
-      "source": "./agent-reflection",
       "category": "productivity"
     },
     {
       "name": "ci-monitoring",
+      "source": "ci-monitoring",
       "description": "MCP-based CI monitoring infrastructure for OpenShift interop job health, agent-driven triage workflows, and watcher rotation automation.",
-      "source": "./ci-monitoring",
       "category": "ci"
     },
     {
       "name": "interop-standards",
+      "source": "interop-standards",
       "description": "Codified interop testing standards for OpenShift CI: expansion workflows, PR review enforcement, rule auditing, and rehearsal best practices.",
-      "source": "./interop-standards",
       "category": "ci"
     }
   ]

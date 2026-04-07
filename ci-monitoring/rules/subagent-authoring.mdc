@@ -1,0 +1,28 @@
+---
+description: Delegate self-contained creation tasks to subagents. If the context used to define a task won't be reused in the main conversation, a subagent should handle it.
+globs:
+alwaysApply: true
+---
+
+# Delegate Self-Contained Tasks
+
+If you won't reuse the context needed to complete a task in the main conversation, delegate it to a **fast subagent** and have it report back.
+
+## When to delegate
+
+- Creating files: rules, skills, scripts, configs, AGENTS.md, documentation
+- Adding tools/features to existing code following established patterns
+- Any task where you'd gather context, do the work, then move on
+
+## When NOT to delegate
+
+- You need the intermediate context to inform the next step in conversation
+- The task is trivial (single edit, quick lookup)
+- You're iterating with the user on the design (delegate the implementation once the design is settled)
+
+## Prompt guidelines
+
+- Tell the subagent to read existing files first for pattern/style consistency
+- Specify exact file paths and whether to create or edit
+- State what to return — concise confirmation, not the full content
+- Include all necessary context since subagents have no access to the conversation

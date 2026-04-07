@@ -1,0 +1,68 @@
+version: "1.0"
+name: repo-setup
+role: >
+  Set up the openshift/release repository for expansion work.
+  Clone or verify existing clone, ensure fork exists, fetch upstream.
+token_profile: minimal
+
+tools:
+  allow:
+    - Shell
+    - GitHub-fork_repository
+    - GitHub-get_me
+
+inputs:
+  fork_owner:
+    type: string
+    required: true
+    description: GitHub username that owns the fork
+  repo_path:
+    type: string
+    required: true
+    description: Local path for the openshift/release clone
+  upstream:
+    type: string
+    required: true
+    description: "Upstream repo (e.g., openshift/release)"
+  default_branch:
+    type: string
+    required: true
+    description: "Default branch name (e.g., main)"
+
+outputs:
+  repo_path:
+    type: string
+    description: Confirmed local repo path
+  upstream_sha:
+    type: string
+    description: SHA of upstream HEAD
+  fork_repo:
+    type: string
+    description: "Full fork repo name (e.g., amp-rh/openshift-release)"
+
+constraints:
+  max_output_tokens: 500
+  structured_output: json
+
+instructions: |
+  1. Check if repo_path exists and is a git repo.
+     - If not, clone upstream with --filter=blob:none:
+       git clone --filter=blob:none https://github.com/{{ upstream }}.git {{ repo_path }}
+
+  2. Ensure fork exists:
+     - Run: gh repo fork {{ upstream }} --clone=false
+     - The fork name may differ from upstream (e.g., openshift-release vs release).
+       Capture the actual fork name from the gh output.
+
+  3. Add fork as remote if not already present:
+     - git remote add fork https://github.com/{{ fork_owner }}/<fork-name>.git
+
+  4. Fetch upstream default branch:
+     - git fetch origin {{ default_branch }}
+
+  5. Output the repo_path, upstream HEAD SHA, and fork repo name.
+
+  Notes:
+  - The upstream remote is named "origin" (from clone).
+  - The fork remote is named "fork".
+  - Use SKIP_PULL=true for any make commands to avoid re-pulling container images.

@@ -1,0 +1,102 @@
+version: "1.0"
+name: pr-lifecycle
+role: >
+  Create a PR for an expansion product, comment on Jira tickets,
+  transition ticket status, and update local tracking files.
+token_profile: minimal
+
+tools:
+  allow:
+    - GitHub-create_pull_request
+    - GitHub-update_pull_request
+    - mcp-atlassian-jira_add_comment
+    - mcp-atlassian-jira_get_transitions
+    - mcp-atlassian-jira_transition_issue
+    - StrReplace
+    - Read
+
+inputs:
+  product:
+    type: object
+    required: true
+    description: Product config with name, expansions (each with ticket key)
+  branch_name:
+    type: string
+    required: true
+    description: Git branch to create PR from
+  fork_repo:
+    type: string
+    required: true
+    description: "Fork repo (e.g., amp-rh/openshift-release)"
+  upstream:
+    type: string
+    required: true
+    description: "Upstream repo (e.g., openshift/release)"
+  default_branch:
+    type: string
+    required: true
+    description: "Base branch for PR (e.g., main)"
+  expansion_types:
+    type: array
+    required: true
+    description: "List of expansion types completed (e.g., ['fips', 'cr'])"
+
+outputs:
+  pr_url:
+    type: string
+    description: URL of the created PR
+  pr_number:
+    type: number
+    description: PR number
+  jira_comments:
+    type: array
+    description: List of Jira comment IDs posted
+
+constraints:
+  max_output_tokens: 500
+  structured_output: json
+
+instructions: |
+  1. CREATE PR
+     - Owner/repo: split {{ upstream }} on "/"
+     - Head: {{ fork_repo owner }}:{{ branch_name }}
+     - Base: {{ default_branch }}
+     - Title: "[OCP CI] {{ product.name }} ocp {{ target_version }} {{ expansion_types | join(' + ') }} expansion"
+     - Body: Use this template:
+
+       ## Summary
+
+       Create OCP {{ target_version }} CI configs for {{ product.name }} interop testing.
+
+       {% for type, expansion in product.expansions %}
+       ### {{ type | upper }} ({{ expansion.ticket }})
+       - Source: `{{ expansion.source }}`
+       - Target: `{{ expansion.target }}`
+       {% endfor %}
+
+       Jira: {% for type, exp in product.expansions %}[{{ exp.ticket }}](https://issues.redhat.com/browse/{{ exp.ticket }}){% endfor %}
+       Epic: [{{ product.epic }}](https://issues.redhat.com/browse/{{ product.epic }})
+
+       Rehearsal job link — will be added after rehearsals complete.
+
+       /cc @dfrazzette
+
+  2. COMMENT ON JIRA TICKETS
+     For each expansion in product.expansions:
+     - Post comment to expansion.ticket with:
+       "PR submitted for {{ product.name }} OCP {{ target_version }} {{ type }} expansion: {{ pr_url }}"
+       Include source/target file names.
+
+  3. TRANSITION JIRA TICKETS
+     For each expansion in product.expansions:
+     - Get available transitions for expansion.ticket
+     - If current status is "New", transition to "In Progress" (ID 41)
+     - If already "In Progress", skip
+
+  4. UPDATE LOCAL TRACKING
+     For each expansion in product.expansions:
+     - If ticket file exists at projects/ocp-*-expansions/tickets/{{ expansion.ticket }}.md:
+       Update Status line to include PR link
+     - If AGENTS.md exists, update the status column for this ticket
+
+  5. OUTPUT pr_url, pr_number, and array of jira comment IDs.
